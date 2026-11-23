@@ -1,0 +1,14 @@
+node_modules
+.next
+.claude
+.env
+.env.*
+*.db
+*.db-journal
+*.tsbuildinfo
+public/uploads
+prisma/migrations-sqlite-backup
+public/images/logo-backup-v2.png
+public/images/logo-original-tall.png
+public/images/old-logo-backup.png
+*.md

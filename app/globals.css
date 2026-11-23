@@ -1,0 +1,251 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #1e3a5f;
+    --color-secondary: #475569;
+    --color-accent: #d4af37;
+    --cream: #F9F6F0;
+    --terracotta: #C85A32;
+    --forest: #3B5D43;
+    --sage: #7A9A70;
+    --ochre: #E09F3E;
+    --charcoal: #2C221E;
+    --earthgreen: #2A3B30;
+  }
+
+  * {
+    @apply border-gray-200;
+  }
+
+  body {
+    background-color: var(--cream);
+    color: var(--charcoal);
+    font-family: var(--font-body), 'Segoe UI', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), Georgia, serif;
+    @apply font-bold;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-terracotta hover:bg-terracotta-dark text-cream px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply bg-forest hover:bg-forest-dark text-cream px-6 py-3 rounded-full font-semibold transition-all duration-200;
+  }
+
+  .btn-outline {
+    @apply border-2 border-terracotta text-terracotta hover:bg-terracotta hover:text-cream px-6 py-3 rounded-full font-semibold transition-all duration-300;
+  }
+
+  .card {
+    @apply bg-white border border-[#EFE7DA] rounded-3xl shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  .input {
+    @apply w-full px-4 py-2 border border-[#E4DACA] rounded-full focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent bg-white;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Organic blob shapes for cards */
+  .blob-1 { border-radius: 58% 42% 55% 45% / 45% 55% 45% 55%; }
+  .blob-2 { border-radius: 45% 55% 48% 52% / 55% 45% 58% 42%; }
+  .blob-3 { border-radius: 52% 48% 42% 58% / 48% 52% 45% 55%; }
+
+  /* Warm textured paper background with soft organic waves */
+  .bg-paper-texture {
+    background-color: var(--cream);
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(122, 154, 112, 0.10), transparent),
+      radial-gradient(ellipse 60% 40% at 90% 10%, rgba(224, 159, 62, 0.09), transparent),
+      radial-gradient(ellipse 70% 50% at 50% 110%, rgba(200, 90, 50, 0.07), transparent),
+      url("data:image/svg+xml,%3Csvg width='1400' height='420' viewBox='0 0 1400 420' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke-width='1.4'%3E%3Cpath d='M0 80 C 200 30, 380 130, 560 85 S 900 20, 1100 75 S 1330 120, 1400 70' stroke='%237A9A70' stroke-opacity='0.13'/%3E%3Cpath d='M0 150 C 220 100, 400 200, 600 150 S 940 90, 1140 145 S 1340 190, 1400 140' stroke='%23C85A32' stroke-opacity='0.10'/%3E%3Cpath d='M0 225 C 180 175, 420 265, 620 215 S 920 160, 1120 220 S 1350 260, 1400 210' stroke='%23E09F3E' stroke-opacity='0.12'/%3E%3Cpath d='M0 305 C 240 255, 420 350, 640 300 S 960 245, 1160 300 S 1360 340, 1400 295' stroke='%237A9A70' stroke-opacity='0.10'/%3E%3Cpath d='M0 380 C 200 330, 440 420, 660 370 S 980 320, 1180 375 S 1370 410, 1400 365' stroke='%23C85A32' stroke-opacity='0.08'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: auto, auto, auto, 1400px 420px;
+  }
+
+  /* Organic wave divider (top of a section) */
+  .wave-divider {
+    display: block;
+    width: 100%;
+    height: 70px;
+  }
+}
+
+@layer utilities {
+  .font-sans {
+    font-family: var(--font-body), 'Segoe UI', sans-serif;
+  }
+
+  .font-serif,
+  .font-heading {
+    font-family: var(--font-heading), Georgia, serif;
+  }
+
+  .text-balance { text-wrap: balance; }
+
+  /* Marquee ribbon */
+  .animate-marquee {
+    animation: marquee-x 28s linear infinite;
+  }
+  @keyframes marquee-x {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Floating animation */
+  @keyframes floaty-y {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(2deg); }
+  }
+  .animate-floaty {
+    animation: floaty-y 6s ease-in-out infinite;
+  }
+
+  /* Rich Text Editor Prose Styles */
+  .prose {
+    @apply text-charcoal leading-relaxed;
+  }
+
+  .prose h1 {
+    @apply text-3xl font-bold my-4;
+  }
+
+  .prose h2 {
+    @apply text-2xl font-bold my-3;
+  }
+
+  .prose h3 {
+    @apply text-xl font-semibold my-2;
+  }
+
+  .prose p {
+    @apply my-3;
+  }
+
+  .prose a {
+    @apply text-terracotta underline hover:text-ochre;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply my-3 ml-6;
+  }
+
+  .prose ul {
+    @apply list-disc;
+  }
+
+  .prose ol {
+    @apply list-decimal;
+  }
+
+  .prose li {
+    @apply my-1;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-sage pl-4 italic my-4;
+  }
+
+  .prose code {
+    @apply bg-[#F1EBDF] px-2 py-1 rounded text-sm font-mono;
+  }
+
+  .prose strong {
+    @apply font-bold;
+  }
+
+  .prose em {
+    @apply italic;
+  }
+
+  .prose img {
+    @apply max-w-full h-auto my-4 rounded-2xl shadow-md;
+  }
+
+  /* Blog Preview Styles */
+  .blog-content h1 {
+    @apply text-3xl font-bold my-4;
+  }
+
+  .blog-content h2 {
+    @apply text-2xl font-bold my-3;
+  }
+
+  .blog-content h3 {
+    @apply text-xl font-semibold my-2;
+  }
+
+  .blog-content p {
+    @apply my-3 leading-relaxed;
+  }
+
+  .blog-content a {
+    @apply text-terracotta underline hover:text-ochre;
+  }
+
+  .blog-content ul,
+  .blog-content ol {
+    @apply my-3 ml-6;
+  }
+
+  .blog-content ul {
+    @apply list-disc;
+  }
+
+  .blog-content ol {
+    @apply list-decimal;
+  }
+
+  .blog-content li {
+    @apply my-1;
+  }
+
+  .blog-content blockquote {
+    @apply border-l-4 border-sage pl-4 italic my-4;
+  }
+
+  .blog-content strong {
+    @apply font-bold;
+  }
+
+  .blog-content em {
+    @apply italic;
+  }
+
+  .blog-content img {
+    @apply max-w-full h-auto my-4 rounded-2xl shadow-md;
+  }
+
+  /* Tables in blog articles */
+  .prose table,
+  .blog-content table {
+    @apply w-full my-6 border-separate border-spacing-0 rounded-2xl border-2 border-[#EAE0CC] text-base;
+  }
+  .prose thead th,
+  .blog-content thead th {
+    @apply bg-[#E4ECDF] text-forest-dark font-bold text-left text-sm uppercase tracking-wide px-3 sm:px-4 py-3;
+  }
+  .prose tbody td,
+  .blog-content tbody td {
+    @apply px-3 sm:px-4 py-3 border-t border-[#EAE0CC] text-charcoal/80 align-top;
+  }
+  .prose tbody tr:nth-child(even) td,
+  .blog-content tbody tr:nth-child(even) td {
+    @apply bg-[#FBF8F2];
+  }
+}
