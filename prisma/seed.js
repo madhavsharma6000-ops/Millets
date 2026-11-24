@@ -13,7 +13,7 @@ async function main() {
   const email = (process.env.ADMIN_EMAIL || '').trim().toLowerCase()
   const password = process.env.ADMIN_PASSWORD || ''
   const strong = password.length >= 12 && password !== 'changeme123'
-  if (password && !strong) throw new Error('ADMIN_PASSWORD must be at least 12 characters')
+  if (password && !strong) console.warn('Seed: ADMIN_PASSWORD ignored, it must be at least 12 characters')
   if (!email) throw new Error('Set ADMIN_EMAIL before the first deploy')
 
   const hash = strong ? await bcrypt.hash(password, 12) : LOCKED
