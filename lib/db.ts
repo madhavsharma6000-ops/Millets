@@ -35,6 +35,11 @@ export function serializeUser(user: any) {
   }
 }
 
+// Older posts were saved with a draft number in the title, e.g. "10. Iron and Anaemia"
+export function displayBlogTitle(title: string) {
+  return title.replace(/^[0-9]+[.][ ]+/, '')
+}
+
 export function serializeBlog(blog: any) {
   if (!blog) return null
   const author = serializeUser(blog.author)

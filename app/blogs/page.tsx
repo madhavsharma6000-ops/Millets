@@ -6,7 +6,7 @@ import BlogCard from '@/components/blog/BlogCard'
 import BlogFilters from '@/components/blog/BlogFilters'
 import DatabaseError from '@/components/DatabaseError'
 import NewsletterForm from '@/components/forms/NewsletterForm'
-import { prisma, serializeBlog } from '@/lib/db'
+import { displayBlogTitle, prisma, serializeBlog } from '@/lib/db'
 
 export const metadata: Metadata = {
   title: 'Healthy Tips & Blogs',
@@ -58,13 +58,13 @@ async function getBlogs(searchParams: any) {
       const author = blog.author && typeof blog.author === 'object' ? blog.author : null
       return {
         _id: blog._id,
-        title: blog.title,
+        title: displayBlogTitle(blog.title),
         slug: blog.slug,
-        excerpt: blog.excerpt || blog.title.substring(0, 150) + '...',
+        excerpt: blog.excerpt || displayBlogTitle(blog.title).substring(0, 150) + '...',
         category: blog.category,
         tags: blog.tags || [],
         featuredImage: blog.featuredImage || '/images/blog-placeholder.jpg',
-        imageAlt: blog.imageAlt || blog.title,
+        imageAlt: displayBlogTitle(blog.imageAlt || blog.title),
         publishedAt: blog.publishedAt || blog.createdAt,
         readingTime: blog.readingTime || 5,
         views: blog.views || 0,

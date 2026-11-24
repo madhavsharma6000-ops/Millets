@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import BlogCard from '@/components/blog/BlogCard'
 import AuthorImage from '@/components/blog/AuthorImage'
 import DatabaseError from '@/components/DatabaseError'
-import { prisma, serializeBlog } from '@/lib/db'
+import { displayBlogTitle, prisma, serializeBlog } from '@/lib/db'
 
 // Enable ISR with 60 second revalidation
 export const revalidate = 60
@@ -28,16 +28,16 @@ async function getBlogBySlug(slug: string) {
 
     return {
       _id: blog._id,
-      title: blog.title,
+      title: displayBlogTitle(blog.title),
       slug: blog.slug,
-      metaTitle: blog.metaTitle || blog.title,
+      metaTitle: displayBlogTitle(blog.metaTitle || blog.title),
       metaDescription: blog.metaDescription || blog.excerpt,
       keywords: blog.keywords || [],
       ogImage: blog.ogImage || blog.featuredImage,
       excerpt: blog.excerpt,
       content: blog.content,
       featuredImage: blog.featuredImage,
-      imageAlt: blog.imageAlt || blog.title,
+      imageAlt: displayBlogTitle(blog.imageAlt || blog.title),
       category: blog.category,
       tags: blog.tags || [],
       publishedAt: blog.publishedAt || blog.createdAt,
@@ -79,9 +79,9 @@ async function getRelatedBlogs(currentBlogId: string, category: string) {
       const author = blog.author && typeof blog.author === 'object' ? blog.author : null
       return {
         _id: blog._id,
-        title: blog.title,
+        title: displayBlogTitle(blog.title),
         slug: blog.slug,
-        excerpt: blog.excerpt || blog.title.substring(0, 150) + '...',
+        excerpt: blog.excerpt || displayBlogTitle(blog.title).substring(0, 150) + '...',
         category: blog.category,
         tags: blog.tags || [],
         featuredImage: blog.featuredImage || '/images/blog-placeholder.jpg',

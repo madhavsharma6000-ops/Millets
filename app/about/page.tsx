@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { Award, BookOpen, GraduationCap, Mail, Linkedin, Twitter, Leaf, Eye, Target, Coffee, Moon, Sunrise, Dumbbell, ArrowRight, Heart, Mountain } from 'lucide-react'
+import KulluCraft from '@/components/home/KulluCraft'
 
 export const metadata: Metadata = {
   title: 'Our Story & Mission',
@@ -195,6 +196,9 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
+        {/* ===== Kullu craft ===== */}
+        <KulluCraft />
 
         {/* wave back */}
         <svg className="wave-divider -mb-px rotate-180" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
