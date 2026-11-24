@@ -1,12 +1,11 @@
-import Razorpay from 'razorpay'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { validateDeliveryDetails } from '@/lib/checkout'
+import { getRazorpayConfig, isRazorpayAuthError, MIN_AMOUNT_PAISE } from '@/lib/razorpay'
 
 export async function POST(request: NextRequest) {
-  const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
-  const keySecret = process.env.RAZORPAY_KEY_SECRET
-  if (!keyId || !keySecret) {
+  const config = getRazorpayConfig()
+  if (!config) {
     return NextResponse.json(
       { message: 'Online payments are not available yet. Please contact us to order.' },
       { status: 503 }
@@ -14,9 +13,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret })
-    const body = await request.json()
-    const { productId } = body
+    const { keyId, client: razorpay } = config
+    const body = await request.json().catch(() => null)
+    const productId = body?.productId
 
     if (!productId || typeof productId !== 'string') {
       return NextResponse.json({ message: 'Product ID is required' }, { status: 400 })
@@ -43,11 +42,11 @@ export async function POST(request: NextRequest) {
       currency = 'INR'
     }
 
-    if (!(amount > 0)) {
+    const amountInPaise = Math.round(amount * 100)
+    if (!(amountInPaise >= MIN_AMOUNT_PAISE)) {
       return NextResponse.json({ message: 'This product cannot be purchased online' }, { status: 400 })
     }
 
-    const amountInPaise = Math.round(amount * 100)
     const options = {
       amount: amountInPaise,
       currency,
@@ -76,12 +75,18 @@ export async function POST(request: NextRequest) {
         orderId: order.id,
         amount: order.amount,
         currency: order.currency,
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        key: keyId,
       },
       { status: 200 }
     )
   } catch (error: any) {
     console.error('❌ Razorpay order creation error:', error)
+    if (isRazorpayAuthError(error)) {
+      return NextResponse.json(
+        { message: 'Payments are temporarily unavailable. Please contact us to order.' },
+        { status: 401 }
+      )
+    }
     return NextResponse.json(
       { message: 'Failed to create order' },
       { status: 500 }

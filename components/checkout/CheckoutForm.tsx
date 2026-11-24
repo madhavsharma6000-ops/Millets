@@ -67,6 +67,7 @@ export default function CheckoutForm({ product }: CheckoutFormProps) {
   const [formData, setFormData] = useState(emptyDeliveryDetails)
   const [errors, setErrors] = useState<any>({})
   const [loading, setLoading] = useState(false)
+  const [paymentError, setPaymentError] = useState('')
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [razorpayLoaded, setRazorpayLoaded] = useState(false)
 
@@ -95,6 +96,7 @@ export default function CheckoutForm({ product }: CheckoutFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setPaymentError('')
 
     if (!validateForm()) {
       return
@@ -102,11 +104,13 @@ export default function CheckoutForm({ product }: CheckoutFormProps) {
 
     // Check if Razorpay is loaded
     if (!window.Razorpay) {
-      alert('Payment system is loading. Please wait a moment and try again.')
+      setPaymentError('The payment system is still loading. Please wait a moment and try again.')
       return
     }
 
     setLoading(true)
+    // Set once Razorpay takes the money: from then on, closing the popup isn't a cancellation
+    let paid = false
 
     try {
       // Step 1: Create Razorpay order
@@ -143,6 +147,8 @@ export default function CheckoutForm({ product }: CheckoutFormProps) {
           color: '#1e3a5f',
         },
         handler: async function (response: any) {
+          paid = true
+          setPaymentError('')
           // Step 3: Verify payment
           try {
             const verifyResponse = await fetch('/api/checkout/verify', {
@@ -165,21 +171,30 @@ export default function CheckoutForm({ product }: CheckoutFormProps) {
             }
           } catch (error) {
             console.error('Verification error:', error)
-            alert('Payment verification failed. Please contact support with your payment ID.')
+            setPaymentError(
+              `We could not confirm your payment. Please do not pay again. Contact us with this payment ID: ${response.razorpay_payment_id}`
+            )
+            setLoading(false)
           }
         },
         modal: {
           ondismiss: function () {
+            if (paid) return
             setLoading(false)
+            setPaymentError((current) => current || 'Payment cancelled. You have not been charged.')
           },
         },
       }
 
       const razorpay = new window.Razorpay(options)
+      // The popup stays open after a failure so the customer can try another method
+      razorpay.on('payment.failed', function (response: any) {
+        setPaymentError(`Payment failed. ${response?.error?.description || 'Please try again.'}`)
+      })
       razorpay.open()
     } catch (error: any) {
       console.error('Checkout error:', error)
-      alert(error.message || 'Checkout failed. Please try again.')
+      setPaymentError(error.message || 'Checkout failed. Please try again.')
       setLoading(false)
     }
   }
@@ -301,6 +316,12 @@ export default function CheckoutForm({ product }: CheckoutFormProps) {
             </div>
           </div>
         </div>
+
+        {paymentError && (
+          <p role="alert" className="rounded-xl border-2 border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
+            {paymentError}
+          </p>
+        )}
 
         {/* Submit Button */}
         <button

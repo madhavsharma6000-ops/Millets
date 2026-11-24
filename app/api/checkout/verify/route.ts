@@ -1,20 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { recordPaidOrder, signatureMatches } from '@/lib/orders'
+import { getRazorpayConfig } from '@/lib/razorpay'
 
 export async function POST(request: NextRequest) {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = await request.json()
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      (await request.json().catch(() => null)) || {}
 
-    const keySecret = process.env.RAZORPAY_KEY_SECRET
-    if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || !keySecret) {
+    const config = getRazorpayConfig()
+    if (!config) {
       return NextResponse.json({ success: false, message: 'Payments are not configured' }, { status: 503 })
     }
 
-    if (
-      typeof razorpay_order_id !== 'string' ||
-      typeof razorpay_payment_id !== 'string' ||
-      !signatureMatches(`${razorpay_order_id}|${razorpay_payment_id}`, razorpay_signature, keySecret)
-    ) {
+    const fields = [razorpay_order_id, razorpay_payment_id, razorpay_signature]
+    if (!fields.every((field) => typeof field === 'string' && field)) {
+      return NextResponse.json({ success: false, message: 'Missing payment details' }, { status: 400 })
+    }
+
+    if (!signatureMatches(`${razorpay_order_id}|${razorpay_payment_id}`, razorpay_signature, config.keySecret)) {
       return NextResponse.json({ success: false, message: 'Invalid signature' }, { status: 400 })
     }
 

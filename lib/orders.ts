@@ -1,7 +1,7 @@
 import crypto from 'crypto'
-import Razorpay from 'razorpay'
 import { formatShippingAddress, prisma } from '@/lib/db'
 import { sendOrderConfirmationEmail } from '@/lib/email'
+import { getRazorpayConfig } from '@/lib/razorpay'
 
 export function signatureMatches(payload: string, signature: unknown, secret: string) {
   const expected = Buffer.from(crypto.createHmac('sha256', secret).update(payload).digest('hex'))
@@ -28,10 +28,8 @@ export async function recordPaidOrder(
   const existing = await findExisting()
   if (existing) return { order: existing, created: false }
 
-  const razorpay = new Razorpay({
-    key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-    key_secret: process.env.RAZORPAY_KEY_SECRET!,
-  })
+  const razorpay = getRazorpayConfig()?.client
+  if (!razorpay) throw new Error('Razorpay is not configured')
   const [rzpOrder, payment] = await Promise.all([
     razorpay.orders.fetch(razorpayOrderId),
     razorpay.payments.fetch(razorpayPaymentId),
