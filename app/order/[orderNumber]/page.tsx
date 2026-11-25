@@ -14,7 +14,7 @@ export default async function OrderPage({ params }: { params: { orderNumber: str
   const order = await prisma.order.findUnique({
     where: { orderNumber: params.orderNumber },
     select: {
-      orderNumber: true, productName: true, amount: true, currency: true, paymentStatus: true,
+      orderNumber: true, productName: true, amount: true, shippingFee: true, currency: true, paymentStatus: true,
       createdAt: true, shippingCity: true, shippingPincode: true,
     },
   })
@@ -43,7 +43,8 @@ export default async function OrderPage({ params }: { params: { orderNumber: str
               ['Order number', order.orderNumber],
               ['Order date', order.createdAt.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' })],
               ['Product', order.productName],
-              ['Amount', `${order.currency === 'USD' ? '$' : '₹'}${order.amount.toFixed(2)}`],
+              ...(order.shippingFee ? [['Delivery charge', `₹${order.shippingFee.toFixed(2)}`]] : []),
+              ['Total', `${order.currency === 'USD' ? '$' : '₹'}${order.amount.toFixed(2)}`],
               ...(order.shippingCity ? [['Delivering to', `${order.shippingCity} – ${order.shippingPincode}`]] : []),
             ].map(([label, value]) => (
               <div key={label} className="flex flex-wrap justify-between gap-x-6 gap-y-1">

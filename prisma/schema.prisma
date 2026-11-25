@@ -110,6 +110,7 @@ model Order {
   product           Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
   productName       String
   amount            Float
+  shippingFee       Float     @default(0)
   currency          String    @default("INR")
   paymentStatus     String    @default("pending")
   downloadUrl       String

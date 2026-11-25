@@ -1,5 +1,13 @@
 // Delivery details: shared by the checkout form and the server.
 
+export const SHIPPING_FEE = 49
+export const FREE_SHIPPING_OVER = 499
+
+/** Delivery charge in rupees for an order. */
+export function shippingFee(price: number, currency: string) {
+  return currency === 'INR' && price <= FREE_SHIPPING_OVER ? SHIPPING_FEE : 0
+}
+
 export const INDIAN_STATES = [
   'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh',
   'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa', 'Gujarat', 'Haryana',

@@ -77,6 +77,7 @@ export async function recordPaidOrder(
           productId: product?.id ?? null,
           productName,
           amount,
+          shippingFee: Number(note('shippingFee')) || 0,
           currency,
           paymentStatus: 'completed',
           downloadUrl: '',

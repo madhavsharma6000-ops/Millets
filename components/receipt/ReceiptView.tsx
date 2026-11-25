@@ -12,6 +12,7 @@ interface ReceiptViewProps {
     customerName?: string
     productName: string
     amount: number
+    shippingFee: number
     currency: string
     paymentStatus: string
     createdAt: string
@@ -212,7 +213,7 @@ export default function ReceiptView({ order, product }: ReceiptViewProps) {
                         <td className="py-4 px-4 text-right">
                           <p className="font-semibold text-gray-900">
                             {order.currency === 'USD' ? '$' : '₹'}
-                            {order.amount.toFixed(2)}
+                            {(order.amount - order.shippingFee).toFixed(2)}
                           </p>
                         </td>
                       </tr>
@@ -228,8 +229,12 @@ export default function ReceiptView({ order, product }: ReceiptViewProps) {
                     <span>Subtotal</span>
                     <span>
                       {order.currency === 'USD' ? '$' : '₹'}
-                      {order.amount.toFixed(2)}
+                      {(order.amount - order.shippingFee).toFixed(2)}
                     </span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Delivery</span>
+                    <span>{order.shippingFee ? `₹${order.shippingFee.toFixed(2)}` : 'Free'}</span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Tax</span>

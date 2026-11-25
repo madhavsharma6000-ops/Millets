@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { prisma, serializeProduct } from '@/lib/db'
+import { shippingFee } from '@/lib/checkout'
 import CheckoutForm from '@/components/checkout/CheckoutForm'
 
 interface CheckoutPageProps {
@@ -24,6 +25,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   if (!product) {
     notFound()
   }
+
+  const shipping = shippingFee(product.price, product.currency)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -91,6 +94,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
                     </span>
                   </div>
                   <div className="flex justify-between text-gray-700">
+                    <span className="font-medium">Delivery</span>
+                    <span className="font-semibold">{shipping ? `₹${shipping}` : 'Free'}</span>
+                  </div>
+                  <div className="flex justify-between text-gray-700">
                     <span className="font-medium">Tax</span>
                     <span className="text-green-600 font-semibold">✓ Included</span>
                   </div>
@@ -99,7 +106,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
                     <div className="text-right">
                       <div className="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                         {product.currency === 'USD' ? '$' : '₹'}
-                        {product.price}
+                        {product.price + shipping}
                       </div>
                     </div>
                   </div>

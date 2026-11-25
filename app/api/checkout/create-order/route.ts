@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { validateDeliveryDetails } from '@/lib/checkout'
+import { shippingFee, validateDeliveryDetails } from '@/lib/checkout'
 import { getRazorpayConfig, isRazorpayAuthError, MIN_AMOUNT_PAISE } from '@/lib/razorpay'
 
 export async function POST(request: NextRequest) {
@@ -42,11 +42,12 @@ export async function POST(request: NextRequest) {
       currency = 'INR'
     }
 
-    const amountInPaise = Math.round(amount * 100)
-    if (!(amountInPaise >= MIN_AMOUNT_PAISE)) {
+    if (!(Math.round(amount * 100) >= MIN_AMOUNT_PAISE)) {
       return NextResponse.json({ message: 'This product cannot be purchased online' }, { status: 400 })
     }
 
+    const shipping = shippingFee(product.price, product.currency)
+    const amountInPaise = Math.round((amount + shipping) * 100)
     const options = {
       amount: amountInPaise,
       currency,
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
         customerName: delivery.name,
         customerEmail: delivery.email,
         customerPhone: delivery.phone,
+        shippingFee: String(shipping),
         shippingAddress1: delivery.address1,
         shippingAddress2: delivery.address2,
         shippingCity: delivery.city,

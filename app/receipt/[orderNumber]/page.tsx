@@ -28,6 +28,7 @@ async function getOrderDetails(orderNumber: string) {
         customerName: order.customerName || undefined,
         productName: order.productName,
         amount: order.amount,
+        shippingFee: order.shippingFee,
         currency: order.currency,
         paymentStatus: order.paymentStatus,
         createdAt: order.createdAt.toISOString(),

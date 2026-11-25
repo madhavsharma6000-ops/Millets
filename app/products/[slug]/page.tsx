@@ -99,7 +99,7 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
               <p className="font-heading text-[44px] font-extrabold text-forest leading-none mb-1">
                 {symbol}{salePrice}
               </p>
-              <p className="text-sm text-[#6B5F58] mb-8">Inclusive of all taxes · Free shipping over ₹499</p>
+              <p className="text-sm text-[#6B5F58] mb-8">Inclusive of all taxes · ₹49 delivery, free over ₹499</p>
 
               <Link
                 href={`/checkout/${product._id}`}
